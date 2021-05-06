@@ -22,6 +22,7 @@
  * /api/v1/`<comport>`/receipt
     ** Печать чека (нал/безнал, продажа/возврат)
     *** Тело запроса (JSON):
+    ```javascript
     {
       "isCash": true,
       "isReturn": false,
@@ -51,6 +52,7 @@
         },
       ]
     }
+    ```
     **** isCash - true, если наличная продажа, иначе false
     **** isReturn - true, если возврат товара, иначе false
     **** goods - список товаров
