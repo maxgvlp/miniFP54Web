@@ -178,6 +178,49 @@ app.get('/api/v1/:comport/z-report', function (req, res) {
   res.send(JSON.stringify(response))
 })
 
+app.get('/api/v1/:comport/inout', function (req, res) {
+  const body = req.body
+
+  const sum = body.sum
+  const inout = body.isIn ? 0 : 1
+
+  logme(`Попытка ${ body.isIn ? 'внесения' : 'изъятия' } суммы: ${ sum }`)
+  logme(`Запрос:
+        ${ JSON.stringify(body) }`)
+
+  if(goods) {
+
+    con.t400me(`open_port;${req.params.comport};${speed};`)
+
+    con.t400me(`in_out;0;0;0;${ inout };${ sum };`)
+    
+    con.t400me(`close_port;`)
+
+    if(result) {
+      logme(`Внесение/изъятие суммы прошло успешно.`)
+    } else {
+      logme(`Внесение/изъятие суммы не удалось. Код ошибки: ${status[0]}, описание: ${status[1]}`)
+    }
+
+    const response = {
+      success: result,
+      error_code: status[0],
+      error: status[1]
+    }
+  
+    res.send(JSON.stringify(response))
+  } else {
+    logme(`Список товаров пуст.`)
+    const response = {
+      success: false,
+      error_code: '---',
+      error: 'Не передан список товаров'
+    }
+  
+    res.send(JSON.stringify(response))
+  }
+})
+
 app.listen(PORT, () => {
   console.log(`Cash app listening at localhost:${PORT}`)
   logme('Веб сервер (пере)запущен успешно')
